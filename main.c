@@ -135,11 +135,14 @@ void writeMaze(char outFilename[], int maze[15][15], int coordinates[2][22]) {
     for (int i = 0; i < numRow; i++) {
         for (int j = 0; j < numCol; j++) {
             fprintf(file, "%d", maze[i][j]);
-            fprintf(file, " ");
+            
+            if (j != numCol - 1) fprintf(file, " ");
         }
         fprintf(file, "\n");
     }
 
+    printf("Se a creado el archivo: %s con el laberinto!\n", outFilename);
+    
     fclose(file);
 }
 
@@ -178,7 +181,6 @@ int main() {
         return -1;
     }
 
-    printf("%d\n", isMazeValid(coordinates, numCordinates));
     builtMaze(maze, coordinates, numCordinates);
     writeMaze(outFilename, maze, coordinates);
 

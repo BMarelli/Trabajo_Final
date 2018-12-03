@@ -3,8 +3,8 @@
 from termcolor import colored
 import os
 
-# Representamos a una matriz de n columnas y filas, con numeros como:
-# maze: list(list(int))
+# Representamos a una matriz de n columnas y filas, con strings como:
+# maze: list(list(stings))
 # Por ejemplo:
 # [["0", "0", "0", "0", "0", "0"],
 # ["1", "1", "1", "0", "1", "1"],
@@ -73,7 +73,7 @@ def is_near_objective(maze, free_spaces):
     return spaces
 
 
-# posible_action: maze (int, int) -> list((int, int))
+# possible_action: maze (int, int) -> list((int, int))
 # Recibe un maze una tupla de int
 # Los elementos de la tuplas representan la fila y la columna dentro del
 # laberinto
@@ -81,7 +81,7 @@ def is_near_objective(maze, free_spaces):
 # nos podemos mover
 # Tenemos como prioridad devolver primero la posibilidades de mover hacia
 # abajo o hacia la derecha. Luego consideramos a para arriba y la izquierda
-def posible_action(maze, position):
+def possible_action(maze, position):
     free_spaces = []
     size = len(maze)
 
@@ -141,13 +141,13 @@ def display_maze(maze, visual, steps=None):
 def solve_maze(maze, visual):
     solve = False
     actual_position = (0, 0)
-    steps = []
+    steps = [actual_position]
 
     while not solve:
-        free_spaces = posible_action(maze, actual_position)
-        nActions = len(free_spaces)
+        free_spaces = possible_action(maze, actual_position)
+        n_actions = len(free_spaces)
 
-        if (nActions == 0):
+        if (n_actions == 0):
             nSteps = len(steps)
             maze[actual_position[0]][actual_position[1]] = "-"
             actual_position = steps[nSteps - 1]
@@ -168,19 +168,22 @@ def solve_maze(maze, visual):
             print(colored("No se pudo resolver el laberinto", color="red"))
             solve = True
 
+    steps.pop(0)
     display_maze(maze, visual, steps)
 
     return steps
 
 
 if __name__ == "__main__":
-    VISUAL = False
     done = False
 
     print("Trabajo Practico Final")
     print("Alumno: Bautista Marelli\n")
 
+    print("El Modo Visual marca con color el recorrido del laberinto\n")
     op = input("Quieres activar el Modo Visual? 1/0\n")
+
+    VISUAL = op == "1"
 
     while not done:
 
@@ -192,10 +195,7 @@ if __name__ == "__main__":
                 maze = parse_maze(f)
                 display_maze(maze, VISUAL)
 
-                if op == "1":
-                    VISUAL = True
-
-                input(">>> Enter para continuar")
+                input(colored(">>> Enter para continuar", color="green"))
                 # borramos la pantalla
                 os.system('cls' if os.name == 'nt' else 'clear')
 
