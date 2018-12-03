@@ -6,12 +6,12 @@ import os
 # Representamos a una matriz de n columnas y filas, con numeros como:
 # maze: list(list(int))
 # Por ejemplo:
-# [[0, 0, 0, 0, 0, 0],
-#  [1, 1, 1, 0, 1, 1],
-#  [1, 1, 1, 0, 1, 1],
-#  [1, 1, 0, 0, 1, 1],
-#  [1, 1, 0, 1, 1, 1],
-#  [1, 1, 0, 0, 2, 1]]
+# [["0", "0", "0", "0", "0", "0"],
+# ["1", "1", "1", "0", "1", "1"],
+# ["1", "1", "1", "0", "1", "1"],
+# ["1", "1", "0", "0", "1", "1"],
+# ["1", "1", "0", "1", "1", "1"],
+# ["1", "1", "0", "0", "2", "1"]]
 
 # Llamamos a colored(maze) al maze que fue editado con la libreria termcolor
 
@@ -51,6 +51,28 @@ def parse_maze(f):
     return maze
 
 
+# is_near_objective: maze list((int, int)) -> list((int, int))
+# Recibe un maze y una lista de tupla
+# Esta lista representa una lista de coordenadas las cuales son los lugares que
+# podemos visitar
+# Devuelve una lista de tuplas
+# En el caso de que el objetivo este en unos de esos espacios que podemos
+# visitar, devuelve una lista con esa coordenada
+# De lo contrario devuelve la lista recibida anteriormente
+def is_near_objective(maze, free_spaces):
+    spaces = []
+
+    for space in free_spaces:
+
+        if (maze[space[0]][space[1]] == "2"):
+            spaces.append(space)
+
+    if len(spaces) == 0:
+        return free_spaces
+
+    return spaces
+
+
 # posible_action: maze (int, int) -> list((int, int))
 # Recibe un maze una tupla de int
 # Los elementos de la tuplas representan la fila y la columna dentro del
@@ -83,7 +105,7 @@ def posible_action(maze, position):
        maze[position[0]][position[1] - 1] != "-"):
         free_spaces.append((position[0], position[1] - 1))
 
-    return free_spaces
+    return is_near_objective(maze, free_spaces)
 
 
 # color_maze: maze list((int, int)) -> colored(maze)
@@ -119,7 +141,7 @@ def display_maze(maze, visual, steps=None):
 def solve_maze(maze, visual):
     solve = False
     actual_position = (0, 0)
-    steps = [actual_position]
+    steps = []
 
     while not solve:
         free_spaces = posible_action(maze, actual_position)
@@ -162,7 +184,7 @@ if __name__ == "__main__":
 
     while not done:
 
-        print("Primero revise la documentacion sobre como ingresar el maze")
+        print("Primero revise la documentacion sobre como ingresar el archivo")
 
         filename = input(">>> Ingresa el nombre del archivo: ")
         try:
@@ -179,8 +201,10 @@ if __name__ == "__main__":
 
                 if VISUAL:
                     solve_maze(maze, VISUAL)
+
                 else:
                     print(solve_maze(maze, VISUAL))
+
                 done = True
 
         except FileNotFoundError:
