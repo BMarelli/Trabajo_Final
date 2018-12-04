@@ -42,11 +42,7 @@ import os
 # Recibe un archivo
 # Devuelve un maze
 def parse_maze(f):
-    maze = []
-
-    for line in f.readlines():
-        line = line.strip("\n")
-        maze.append(line.split(" "))
+    maze = [line.strip().split(" ") for line in f.readlines()]
 
     return maze
 
@@ -124,7 +120,7 @@ def color_maze(maze, steps):
 # display_maze: maze boolean list((int, int)) -> None
 # Recibe un laberinto y el camino hacia la salida y lo muestra
 # En el caso que visual sea True, colorea el camino
-def display_maze(maze, visual, steps=None):
+def display_maze(maze, visual=False, steps=None):
     if visual:
         maze = color_maze(maze, steps)
 
@@ -162,10 +158,11 @@ def solve_maze(maze, visual):
 
         if element_in_maze == "2":
             steps.append(actual_position)
+            print(colored("Se pudo resolver el laberinto!", color="green"))
             solve = True
 
         if len(steps) == 0:
-            print(colored("No se pudo resolver el laberinto", color="red"))
+            print(colored("No se pudo resolver el laberinto!", color="red"))
             solve = True
 
     steps.pop(0)
@@ -193,7 +190,7 @@ if __name__ == "__main__":
         try:
             with open(filename, "r") as f:
                 maze = parse_maze(f)
-                display_maze(maze, VISUAL)
+                display_maze(maze)
 
                 input(colored(">>> Enter para continuar", color="green"))
                 # borramos la pantalla
