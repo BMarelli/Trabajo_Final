@@ -3,16 +3,18 @@
 #include <assert.h>
 
 // MODO DE USO:
-// El usuario tiene que introducir el nomber del archivo, de preferencia (laberinto.txt)
+// El usuario tiene que introducir el nombre del archivo, de preferencia (laberinto.txt)
 // Se generara un archivo llamado maze.txt, en el cual se encuentra el laberinto
 
 // El archivo a recibir (laberinto.txt) debe cumplir con ciertas características:
 // - En la primera linea tiene que estar el tamaño que tendra el laberinto.
 //   Primero es la cantidad de filas y luego la cantidad de columnas, separados por un espacio.
 // - Luego, la segunda linea tiene que tener las coordenadas del objetivo, separados por un espacio.
-// - Por ultimo, cada linea restante representan las coordenadas de los muros
+// - Por ultimo, las lineas restantes representan las coordenadas de los muros
 //   Cada elemento tiene que estar separado por espacios
-// - Importante! El archivo debe finalizar con un salto de línea
+// - Importante! El archivo debe tener como maximo 22 lines:
+//   1 (tamaño) + 1 (objetivo) + 20 (muros)
+// - Importante! El archivo debe terminar con un salto de linea
 // Ejemplo: (archivo: laberinto.txt)
 /*
     6 6
@@ -40,22 +42,34 @@
 
 */
 
+// Salida: (archivo: maze.txt)
+/*
+    0 0 0 0 0 0
+    0 1 0 0 1 1
+    1 1 1 0 1 1
+    1 1 0 0 1 1
+    1 1 0 1 1 1
+    1 1 0 0 2 1
+
+*/
+
 
 // parseFile: char[] int[2][22] -> int
 // Esta funcion recibe el nombre del archivo introducido por el usuario y una matriz de 2 filas y 22 columnas
 // Esta matriz contiene las coordenadas que se encuentran en el archivo recibido.
 // Aclaracion: El tamaño de esta matriz es de 22 ya que sabemos que el maximo de muros que podemos recibir es 20, luego
-// contamos tambien el tamaño del laberinto y la coordenada del objetivo.
+// contamos tambien el tamaño del laberinto y las coordenadas del objetivo.
 // 22 = 1 (tamaño) + 1 (objetivo) + 20 (muros)
 // Por ultimo, la matriz coordinates tiene 2 filas porque cada fila representa cada elemento de las coordenadas
-// En el caso de que este no exista devuelve un error
-// Devuelve la cantidad de lineas leidas
+// En el caso de que el archivo no exista, devuelve un error
+// En el caso contrario, devuelve la cantidad de lineas leidas
 int parseFile(char filename[], int coordinates[2][22]){
     FILE * file;
     file = fopen(filename, "r");
 
     if(file == NULL) {
         printf("Error: El archivo %s no existe!\n", filename);
+
         return -1;
     }
 
@@ -105,10 +119,10 @@ int isMazeValid(int coordinates[2][22], int numCordinates) {
 }
 
 
-// builtMaze: int[15][15] int[2][22] int -> void
+// buildMaze: int[15][15] int[2][22] int -> void
 // Esta funcion recibe una matriz que representa el laberinto, una matriz de coordenadas y la cantidad de coordenadas
 // Segun las coordenadas recibidas, las cuales son del muro y del objetivo, modifica el laberinto
-void builtMaze(int maze[15][15], int coordinates[2][22], int numCordinates) {
+void buildMaze(int maze[15][15], int coordinates[2][22], int numCordinates) {
     int numRow = coordinates[0][0];
     int numCol = coordinates[0][1];
     int a = 1;
@@ -127,7 +141,7 @@ void builtMaze(int maze[15][15], int coordinates[2][22], int numCordinates) {
 // Escribre, separado por espacios cada valor que tenga la matriz del laberinto
 void writeMaze(char outFilename[], int maze[15][15], int coordinates[2][22]) {
     FILE * file;
-    file = fopen(outFilename, "w+");
+    file = fopen(outFilename, "w+");  // creamos o sobreescribimos en el archivo maze.txt
 
     int numRow = coordinates[0][0];
     int numCol = coordinates[1][0];
@@ -138,6 +152,7 @@ void writeMaze(char outFilename[], int maze[15][15], int coordinates[2][22]) {
             
             if (j != numCol - 1) fprintf(file, " ");
         }
+
         fprintf(file, "\n");
     }
 
@@ -161,12 +176,12 @@ void runAssert() {
 
 int main() {
 
-    runAssert();
+    runAssert();  // corremos los asserts
 
     char filename[15];
     char outFilename[] = "maze.txt";
-    int coordinates[2][22]; // las columnas representan coordenadas
-    int maze[15][15] = {0}; // lo iniciamos con 0 ya que luego lo modificaremos segun el archivo
+    int coordinates[2][22];  // las columnas representan coordenadas
+    int maze[15][15] = {0};  // lo iniciamos con 0 ya que luego lo modificaremos segun el archivo
 
     printf(">>> Introdusca el nombre del archivo: ");
     scanf("%s", filename);
@@ -181,7 +196,7 @@ int main() {
         return -1;
     }
 
-    builtMaze(maze, coordinates, numCordinates);
+    buildMaze(maze, coordinates, numCordinates);
     writeMaze(outFilename, maze, coordinates);
 
     return 0;
